@@ -1,8 +1,9 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = ""; // mot de passe MySQL (souvent vide sous XAMPP)
-$dbname = "planning_db";
+$host = getenv("hostname");
+$port = getenv("Port");
+$db   = getenv("");
+$user = getenv("DB_USER");
+$pass = getenv("DB_PASSWORD");
 
 // Connexion
 $conn = new mysqli(
@@ -18,3 +19,4 @@ if ($conn->connect_error) {
   die("Erreur de connexion : " . $conn->connect_error);
 }}
 ?>
+
