@@ -1,12 +1,15 @@
 FROM php:8.2-apache
 
-# Installer extensions PHP nécessaires
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Installer les dépendances nécessaires à PostgreSQL
+RUN apt-get update && apt-get install -y libpq-dev
 
-# Activer mod_rewrite (important pour PHP)
+# Installer extensions PHP nécessaires
+RUN docker-php-ext-install pdo pdo_pgsql
+
+# Activer mod_rewrite
 RUN a2enmod rewrite
 
-# Copier le site dans le dossier Apache
+# Copier le site dans Apache
 COPY . /var/www/html
 
 # Donner les bons droits
