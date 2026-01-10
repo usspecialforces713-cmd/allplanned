@@ -1,22 +1,19 @@
 <?php
 $host = getenv("hostname");
 $port = getenv("Port");
-$db   = getenv("");
-$user = getenv("DB_USER");
-$pass = getenv("DB_PASSWORD");
+$db   = getenv("database");
+$user = getenv("username");
+$pass = getenv("pasword");
 
-// Connexion
-$conn = new mysqli(
-    hostname: 'localhost',
-    username: 'root',
-    password: '',
-    database: 'planning_db'
-);
-if ($conn->connect_error) {
-
-// Vérifie la connexion
-if ($conn->connect_error) {
-  die("Erreur de connexion : " . $conn->connect_error);
-}}
+try {
+    $pdo = new PDO(
+        "pgsql:host=$host;port=$port;dbname=$db",
+        $user,
+        $pass,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
+    echo "Connexion PostgreSQL OK 🎉";
+} catch (PDOException $e) {
+    die("Erreur : " . $e->getMessage());
+}
 ?>
-
