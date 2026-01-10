@@ -12,8 +12,9 @@ try {
         $pass,
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-    echo "Connexion PostgreSQL OK 🎉";
+   
 } catch (PDOException $e) {
     die("Erreur : " . $e->getMessage());
 }
 ?>
+
