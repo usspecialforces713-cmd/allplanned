@@ -149,13 +149,23 @@ button:hover {
 }
 </style>
 
-    <form method="post">
-        <input type="text" name="username" placeholder="Nom d'utilisateur" required>
-        <input type="password" name="password" placeholder="Mot de passe" required>
-        <button type="submit">Se connecter</button>
+   <div class="login-box">
+    <h2>Connexion</h2>
+
+    <form method="POST">
+      <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+      <input type="password" name="password" placeholder="Mot de passe" required>
+      <button type="submit">Se connecter</button>
     </form>
 
-    <p><a href="register.php">Créer un compte</a></p>
+    <?php if ($error): ?>
+        <p class="error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
+
+    <a href="register.php">Créer un compte</a>
+  </div>
+
 </body>
 </html>
+
 
