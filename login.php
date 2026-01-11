@@ -11,9 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username === '' || $password === '') {
         $error = "Tous les champs sont obligatoires.";
     } else {
-        $stmt = $conn->prepare(
-            "SELECT id, username, password FROM users WHERE username = :username"
-        );
+        $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username = :username");
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -31,141 +29,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Connexion</title>
-</head>
-<body>
-    <h2>Connexion</h2>
+<meta charset="UTF-8">
+<title>Connexion</title>
 
-    <?php if ($error): ?>
-        <p style="color:red"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
 <style>
-
 body {
-  font-family: Arial, sans-serif;
-  background: #f3f4f6;
-  margin: 0;
-  padding: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.container {
-  width: 900px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.oauth-box {
-  width: 45%;
-}
-
-.oauth-btn {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 14px;
-  margin-bottom:10px;
-  border-radius:8px;
-  text-decoration:none;
-  font-size:15px;
-  border:1px solid #ccc;
-  color:#111;
-  background:white;
-}
-
-.oauth-btn.github { background:#24292e; color:white; }
-.oauth-btn.microsoft { background:#2F2F7A; color:white; }
-
-.login-box {
-  width: 45%;
-  background:white;
-  padding:30px;
-  border-radius:15px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-#loader {
-    position: fixed;
-    inset: 0;
-    background: white;
+    font-family: Arial, sans-serif;
+    background: #f3f4f6;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    height: 100vh;
 }
 
-#loader-box {
-    text-align: center;
-    font-family: Arial;
-    font-size: 18px;
+.login-box {
+    width: 420px;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: relative;
 }
 
-#spinner {
-    width: 40px;
-    height: 40px;
-    border: 5px solid #ddd;
-    border-top-color: #007bff;
-    border-radius: 50%;
-    margin: 10px auto;
-    animation: spin 1s linear infinite;
+.login-box h2 {
+    margin-bottom: 20px;
 }
 
-.fast #spinner { animation-duration: 0.5s; }
-.medium #spinner { animation-duration: 1.2s; }
-.slow #spinner { animation-duration: 2s; }
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.register-link {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    text-decoration: none;
+    color: #0d6efd;
+    font-size: 14px;
 }
-
 
 input {
-  width:100%;
-  padding:12px;
-  margin-bottom:15px;
-  border-radius:8px;
-  border:1px solid #ccc;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 button {
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  background:#0d6efd;
-  color:white;
-  cursor:pointer;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #0d6efd;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
 }
+
 button:hover {
-  background:#0b5ed7;
+    background: #0b5ed7;
 }
 
 .error {
-  color:red;
-  margin-top:10px;
+    color: red;
+    margin-bottom: 15px;
 }
 </style>
+</head>
 
-   <div class="login-box">
+<body>
+
+<div class="login-box">
+    <a href="register.php" class="register-link">Créer un compte</a>
+
     <h2>Connexion</h2>
-
-    <form method="POST">
-      <input type="text" name="username" placeholder="Nom d'utilisateur" required>
-      <input type="password" name="password" placeholder="Mot de passe" required>
-      <button type="submit">Se connecter</button>
-    </form>
 
     <?php if ($error): ?>
         <p class="error"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
-    <a href="register.php">Créer un compte</a>
-  </div>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+        <button type="submit">Se connecter</button>
+    </form>
+</div>
 
 </body>
 </html>
-
-
