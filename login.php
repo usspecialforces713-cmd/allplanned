@@ -100,7 +100,7 @@ button:hover {
 <div class="login-box">
     <a href="register.php" class="register-link">Créer un compte</a>
 
-    <h2>Connexion</h2>
+   
 
     <?php if ($error): ?>
         <p class="error"><?= htmlspecialchars($error) ?></p>
@@ -115,3 +115,4 @@ button:hover {
 
 </body>
 </html>
+
