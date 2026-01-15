@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username === '' || $password === '') {
         $error = "Tous les champs sont obligatoires.";
     } else {
-        $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username = :username");
+        $stmt = $conn->prepare("SELECT id, username, password FROM public.users WHERE public.username = :username");
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -115,4 +115,5 @@ button:hover {
 
 </body>
 </html>
+
 
