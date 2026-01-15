@@ -1,19 +1,18 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
-  header("Location: login.php");
-  exit();
+    header("Location: login.php");
+    exit();
 }
 
-require 'database.php';
+require 'database.php'; // ici, $pdo est un objet PDO connecté à PostgreSQL
 $user_id = $_SESSION['user_id'];
 
 // Récupérer les infos utilisateur
-$sql = "SELECT username, email, reason, photo FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
+$sql = "SELECT username, email, reason, photo FROM users WHERE id = :id";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([':id' => $user_id]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -92,3 +91,4 @@ button:hover {
   </div>
 </body>
 </html>
+
