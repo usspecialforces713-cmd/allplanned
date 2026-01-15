@@ -1,30 +1,29 @@
 <?php
 session_start();
-require 'database.php';
+require_once __DIR__ . '/database.php';
 
-$error = '';
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if ($username === '' || $password === '') {
-        $error = "Tous les champs sont obligatoires.";
-    } else {
-        $stmt = $conn->prepare("SELECT id, username, password FROM public.users WHERE public.username = :username");
-        $stmt->execute(['username' => $username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
 
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header("Location: planning.php");
-            exit;
-        } else {
-            $error = "Nom d'utilisateur ou mot de passe incorrect.";
-        }
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $username;
+        header("Location: index.php");
+        exit;
     }
+
+    $error = "Identifiants incorrects";
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -115,5 +114,6 @@ button:hover {
 
 </body>
 </html>
+
 
 
