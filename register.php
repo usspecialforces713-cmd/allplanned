@@ -20,9 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
 
         // Vérifier si l'utilisateur existe déjà
-        $check = $pdo->prepare(
-            "SELECT id FROM users WHERE username = :username"
-        );
+       $check = $pdo->prepare(
+    "SELECT id FROM public.users WHERE username = :username"
+);
+
         $check->execute([
             ':username' => $username
         ]);
@@ -151,5 +152,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </body>
 </html>
+
 
 
