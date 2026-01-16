@@ -1,29 +1,51 @@
 <?php
 // bulk_create.php — upload CSV username,password (sans header)
-require_once 'database.php';
+require_once 'database.php'; // $pdo
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv'])) {
     $f = $_FILES['csv']['tmp_name'];
+
     if (($handle = fopen($f, 'r')) !== false) {
-        $created = 0; $skipped = 0;
+        $created = 0;
+        $skipped = 0;
+
+        // Préparer les requêtes une seule fois (plus rapide)
+        $checkStmt = $pdo->prepare(
+            "SELECT id FROM users WHERE username = :username"
+        );
+        $insertStmt = $pdo->prepare(
+            "INSERT INTO users (username, password) VALUES (:username, :password)"
+        );
+
         while (($data = fgetcsv($handle, 1000, ",")) !== false) {
             $username = trim($data[0] ?? '');
-            $plain = $data[1] ?? '';
-            if ($username === '' || $plain === '') continue;
-            // existe ?
-            $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $stmt->store_result();
-            if ($stmt->num_rows > 0) { $skipped++; $stmt->close(); continue; }
-            $stmt->close();
+            $plain    = $data[1] ?? '';
+
+            if ($username === '' || $plain === '') {
+                continue;
+            }
+
+            // Existe ?
+            $checkStmt->execute([
+                ':username' => $username
+            ]);
+
+            if ($checkStmt->fetch()) {
+                $skipped++;
+                continue;
+            }
+
             $hash = password_hash($plain, PASSWORD_DEFAULT);
-            $ins = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-            $ins->bind_param("ss", $username, $hash);
-            if ($ins->execute()) $created++;
-            $ins->close();
+
+            if ($insertStmt->execute([
+                ':username' => $username,
+                ':password' => $hash
+            ])) {
+                $created++;
+            }
         }
+
         fclose($handle);
         $msg = "Création terminée : $created créé(s), $skipped ignoré(s).";
     } else {
@@ -31,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv'])) {
     }
 }
 ?>
+
 <!doctype html>
 <html lang="fr">
 <head><meta charset="utf-8"><title>Import CSV</title></head>
@@ -44,3 +67,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv'])) {
   <p>Ex : <code>alex,abcd</code></p>
 </body>
 </html>
+
