@@ -1,18 +1,19 @@
 <?php
 session_start();
-require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/database.php'; // $pdo
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
+    $sql = "SELECT id, password FROM users WHERE username = :username";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':username' => $username
+    ]);
 
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
@@ -23,8 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $error = "Identifiants incorrects";
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -114,6 +115,7 @@ button:hover {
 
 </body>
 </html>
+
 
 
 
