@@ -9,7 +9,7 @@ require 'database.php'; // ici, $pdo est un objet PDO connecté à PostgreSQL
 $user_id = $_SESSION['user_id'];
 
 // Récupérer les infos utilisateur
-$sql = "SELECT username, email, reason, photo FROM users WHERE id = :id";
+$sql = "SELECT username, email, reason, photo FROM Public.users WHERE id = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -91,4 +91,5 @@ button:hover {
   </div>
 </body>
 </html>
+
 
