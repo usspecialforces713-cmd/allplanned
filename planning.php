@@ -12,8 +12,7 @@ $username = $_SESSION['username'] ?? 'Invité';
 $user_id  = (int) $_SESSION['user_id'];
 
 // Récupérer les tâches
-$stmt = $conn->prepare(
-    "SELECT id, title, date, status 
+$stmt = $conn->prepare("SELECT id, title, date, status 
      FROM tasks 
      WHERE user_id = ? 
      ORDER BY id DESC"
@@ -214,3 +213,4 @@ button:hover {
   <input type="file" id="musicInput" accept="audio/*">
   <audio id="musicPlayer" controls style="display:none;"></audio>
 </div>
+
