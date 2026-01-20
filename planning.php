@@ -12,11 +12,14 @@ $username = $_SESSION['username'] ?? 'Invité';
 $user_id  = (int) $_SESSION['user_id'];
 
 // Récupérer les tâches
-$stmt = $conn->prepare("SELECT id, title, date, status 
-     FROM tasks 
-     WHERE user_id = ? 
-     ORDER BY id DESC"
-);
+$stmt = $pdo->prepare("
+  SELECT id, title, date, status
+  FROM tasks
+  WHERE user_id = ?
+  ORDER BY id DESC
+");
+$stmt->execute([$user_id]);
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -213,4 +216,5 @@ button:hover {
   <input type="file" id="musicInput" accept="audio/*">
   <audio id="musicPlayer" controls style="display:none;"></audio>
 </div>
+
 
