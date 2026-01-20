@@ -102,9 +102,7 @@ button:hover {
 
    
 
-    <?php if ($error): ?>
-        <p class="error"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+    
 
     <form method="POST">
         <input type="text" name="username" placeholder="Nom d'utilisateur" required>
@@ -115,6 +113,7 @@ button:hover {
 
 </body>
 </html>
+
 
 
 
