@@ -1,6 +1,5 @@
 
 <?php
-session_start();
 $username = $_SESSION['username'] ?? 'Invité';
 ?>
 <!DOCTYPE html>
@@ -316,3 +315,4 @@ button:hover {
   </div>
 </body>
 </html>
+
