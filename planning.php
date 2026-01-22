@@ -212,12 +212,149 @@ button:hover {
   <div class="username">
     Connecté en tant que <strong><?= htmlspecialchars($username) ?></strong>
   </div>
+    <div class="sidebar closed" id="sidebar">
+    <div class="top-bar">
+        <h2>AllPlaned</h2>
+        <button id="closeBtn" class="close-btn">✖</button>
+    </div>
+
+    <ul>
+        <li><a href="index.php">🏠 Accueil</a></li>
+        <li><a href="planning.php">🗓️ Planning</a></li>
+        <li><a href="emploidutemps.php">📅 Emploi du temps</a></li>
+        <li><a href="profile.php">👤 Profil</a></li>
+        <li><a href="logout.php">🔓 Déconnexion</a></li>
+    </ul>
+</div>
+
+<!-- BOUTON HAMBURGER -->
+<div id="hamburger" class="hamburger">☰</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content full" id="main">
+
+    <div class="container">
+        <h1>Mon planning</h1>
+
+        <!-- FORM AJOUT -->
+        <form action="save_task.php" method="POST">
+            <input type="text" name="title" placeholder="Nouvelle tâche..." required>
+            <input type="date" name="date">
+            <button type="submit">Ajouter</button>
+        </form>
+
+        <!-- LECTEUR MUSIQUE -->
+        <div style="margin-top:20px;">
+            <h3>🎵 Importer une musique</h3>
+            <input type="file" id="musicInput" accept="audio/*">
+            <audio id="musicPlayer" controls style="display:none;margin-top:10px;"></audio>
+        </div>
+
+        <!-- LISTE DES TÂCHES -->
+        <div class="task-list">
+            <?php if ($result && $result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php $completed = ($row["status"] == "done") ? "completed" : ""; ?>
+                    <div class="task <?= $completed ?>">
+                        <strong><?= htmlspecialchars($row['date']) ?></strong> —  
+                        <?= htmlspecialchars($row['title']) ?>
+
+                        <div style="float:right;">
+                            <?php if ($row['status'] !== 'done'): ?>
+                                <form action="mark_done.php" method="POST" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                    <button>✔ Terminer</button>
+                                </form>
+                            <?php endif; ?>
+
+                            <form action="delete_task.php" method="POST" style="display:inline;">
+                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                <button>🗑 Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p>Aucune tâche pour le moment.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+
+<!-- SCRIPT MUSIQUE -->
+<script>
+document.getElementById("musicInput").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    let player = document.getElementById("musicPlayer");
+    player.src = url;
+    player.style.display = "block";
+    player.play();
+});
+</script>
+
+<!-- SCRIPT SIDEBAR -->
+<script>
+const sidebar = document.getElementById("sidebar");
+const ham = document.getElementById("hamburger");
+const closeBtn = document.getElementById("closeBtn");
+const main = document.getElementById("main");
+
+ham.addEventListener("click", () => {
+    sidebar.classList.remove("closed");
+    main.classList.remove("full");
+});
+
+closeBtn.addEventListener("click", () => {
+    sidebar.classList.add("closed");
+    main.classList.add("full");
+});
+</script>
+<script>
+// demande permission au chargement
+if (Notification && Notification.permission !== "granted") {
+  Notification.requestPermission();
+}
+
+async function checkReminders() {
+  try {
+    const res = await fetch('check_reminders.php', {credentials: 'same-origin'});
+    const tasks = await res.json();
+    if (tasks && tasks.length) {
+      tasks.forEach(t => {
+        // affiche notification
+        if (Notification && Notification.permission === "granted") {
+          new Notification("Rappel AllPlaned", {
+            body: `${t.title} à ${t.task_time}`,
+            icon: 'assets/images/logo.png'
+          });
+        }
+        // on peut aussi marquer notified côté client en appelant server pour set reminded=1
+        fetch('mark_reminded.php', {
+          method: 'POST',
+          headers: {'Content-Type':'application/x-www-form-urlencoded'},
+          body: `id=${encodeURIComponent(t.id)}`
+        });
+      });
+    }
+  } catch(e) { console.warn(e); }
+}
+
+// check toutes les 5 minutes + au chargement
+checkReminders();
+setInterval(checkReminders, 5*60*1000);
+</script>
+
 </nav>
 <div style="margin-top:30px;">
   <h3>🎧 Importer et jouer une musique</h3>
   <input type="file" id="musicInput" accept="audio/*">
   <audio id="musicPlayer" controls style="display:none;"></audio>
 </div>
+
 
 
 
