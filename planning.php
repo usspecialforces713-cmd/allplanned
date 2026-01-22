@@ -31,6 +31,7 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <meta charset="UTF-8">
 <title>Mon planning</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="planning.css">
 
 <!-- CSS ICI -->
 <style>
@@ -179,3 +180,4 @@ input.addEventListener("change", e => {
 
 </body>
 </html>
+
