@@ -4,25 +4,34 @@ require 'database.php';
 
 // Vérifie que l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
-  header("Location: login.php");
-  exit();
+    header("Location: login.php");
+    exit();
 }
 
 if (isset($_POST['id'])) {
-  $task_id = intval($_POST['id']);
-  $user_id = $_SESSION['user_id'];
+    $task_id = (int) $_POST['id'];
+    $user_id = (int) $_SESSION['user_id'];
 
-  // On efface seulement la tâche appartenant à cet utilisateur
-  $sql = "DELETE FROM tasks WHERE id = ? AND user_id = ?";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("ii", $task_id, $user_id);
+    // Suppression sécurisée (PostgreSQL + PDO)
+    $stmt = $pdo->prepare("
+        DELETE FROM tasks
+        WHERE id = :task_id
+          AND user_id = :user_id
+    ");
 
-  if ($stmt->execute()) {
-    header("Location: planning.php"); // Reviens au planning
-    exit();
-  } else {
-    echo "❌ Erreur lors de la suppression de la tâche.";
-  }
+    $stmt->execute([
+        ':task_id' => $task_id,
+        ':user_id' => $user_id
+    ]);
+
+    // Si aucune ligne supprimée → tâche inexistante ou non autorisée
+    if ($stmt->rowCount() > 0) {
+        header("Location: planning.php");
+        exit();
+    } else {
+        echo "❌ Erreur : tâche introuvable ou non autorisée.";
+    }
+
 } else {
-  echo "⚠️ Aucune tâche sélectionnée.";
+    echo "⚠️ Aucune tâche sélectionnée.";
 }
