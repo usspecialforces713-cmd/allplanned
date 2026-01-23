@@ -1,7 +1,5 @@
 <?php
-/***************************
- * LOGIQUE PHP (HAUT)
- ***************************/
+
 session_start();
 require 'database.php';
 
@@ -127,6 +125,8 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <input type="date" name="date">
   <button>Ajouter</button>
 </form>
+    <div class="task <?= $task['status'] === 'done' ? 'completed' : '' ?>">
+
 
 <div class="music-box">
   <h3>🎵 Importer une musique</h3>
@@ -180,4 +180,5 @@ input.addEventListener("change", e => {
 
 </body>
 </html>
+
 
