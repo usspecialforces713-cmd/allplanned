@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require 'database.php';
 
@@ -12,85 +11,75 @@ if (!isset($_SESSION['user_id'])) {
 $username = $_SESSION['username'] ?? 'Invité';
 $user_id  = (int) $_SESSION['user_id'];
 
-// Récupération des tâches (PDO)
+// Récupération des tâches
 $stmt = $pdo->prepare("
     SELECT id, title, date, status
     FROM tasks
     WHERE user_id = :uid
     ORDER BY id DESC
 ");
-$stmt->execute([':uid' => $user_id]);
+$stmt->execute(['uid' => $user_id]);
 $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <title>Mon planning</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="planning.css">
 
-<!-- CSS ICI -->
 <style>
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 240px;
-    height: 100vh;
-    background: linear-gradient(180deg, #1e3a8a, #2563eb);
-    color: white;
-    padding: 25px 20px;
-    box-shadow: 3px 0 12px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease;
-    z-index: 1000;
-}
-.sidebar.closed { transform: translateX(-260px); }
-
-.sidebar .top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2ff;
+    margin: 0;
+    padding: 0;
 }
 
-.close-btn {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1.6rem;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.hamburger {
-    position: fixed;
-    top: 15px;
-    left: 15px;
+nav {
     background: #1e3a8a;
     color: white;
-    padding: 10px 14px;
-    font-size: 1.6rem;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 1100;
+    padding: 15px;
 }
 
-/* ===== MAIN CONTENT ===== */
-.main-content {
-    margin-left: 260px;
-    padding: 25px;
-    transition: 0.3s;
-}
-.main-content.full { margin-left: 20px; }
-
-/* ===== STYLE FORM + TÂCHES ===== */
 .container {
-  background: #fff;
-  max-width: 900px;
-  padding: 30px;
-  border-radius: 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1 {
+    margin-top: 0;
+}
+
+form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="date"] {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
 }
 
 .task {
@@ -99,19 +88,38 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
     padding: 12px;
     border-radius: 10px;
     margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
+
 .task.completed {
     background: #fef9c3;
     border-left-color: #facc15;
     text-decoration: line-through;
+    opacity: 0.8;
 }
 
-</style>>
+.actions {
+    display: flex;
+    gap: 6px;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.music-box {
+    margin: 25px 0;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f1f5f9;
+}
+</style>
 </head>
 
 <body>
 
-<!-- HTML SEULEMENT -->
 <nav>
   Connecté : <strong><?= htmlspecialchars($username) ?></strong>
 </nav>
@@ -123,10 +131,8 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <form action="save_task.php" method="POST">
   <input type="text" name="title" placeholder="Nouvelle tâche..." required>
   <input type="date" name="date">
-  <button>Ajouter</button>
+  <button type="submit">Ajouter</button>
 </form>
-    <div class="task <?= $task['status'] === 'done' ? 'completed' : '' ?>">
-
 
 <div class="music-box">
   <h3>🎵 Importer une musique</h3>
@@ -135,50 +141,47 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <div class="task-list">
+<?php if ($tasks): ?>
+    <?php foreach ($tasks as $task): ?>
+        <div class="task <?= $task['status'] === 'done' ? 'completed' : '' ?>">
+            <div>
+                <strong><?= htmlspecialchars($task['date']) ?></strong> —
+                <?= htmlspecialchars($task['title']) ?>
+            </div>
 
-<?php if (!empty($tasks)): ?>
-  <?php foreach ($tasks as $task): ?>
-    <div class="task <?= $task['status']==='done' ? 'completed' : '' ?>">
-      <strong><?= htmlspecialchars($task['date']) ?></strong>
-      — <?= htmlspecialchars($task['title']) ?>
+            <div class="actions">
+                <?php if ($task['status'] !== 'done'): ?>
+                    <form action="mark_done.php" method="POST">
+                        <input type="hidden" name="id" value="<?= $task['id'] ?>">
+                        <button type="submit">✔</button>
+                    </form>
+                <?php endif; ?>
 
-      <div class="actions">
-        <?php if ($task['status'] !== 'done'): ?>
-          <form action="mark_done.php" method="POST">
-            <input type="hidden" name="id" value="<?= $task['id'] ?>">
-            <button>✔</button>
-          </form>
-        <?php endif; ?>
-
-        <form action="delete_task.php" method="POST">
-          <input type="hidden" name="id" value="<?= $task['id'] ?>">
-          <button>🗑</button>
-        </form>
-      </div>
-    </div>
-  <?php endforeach; ?>
+                <form action="delete_task.php" method="POST">
+                    <input type="hidden" name="id" value="<?= $task['id'] ?>">
+                    <button type="submit">🗑</button>
+                </form>
+            </div>
+        </div>
+    <?php endforeach; ?>
 <?php else: ?>
-  <p>Aucune tâche pour le moment.</p>
+    <p>Aucune tâche pour le moment.</p>
 <?php endif; ?>
-
 </div>
 
 </main>
 
-<!-- JS SEUL -->
 <script>
 const input = document.getElementById("musicInput");
 const player = document.getElementById("musicPlayer");
 
 input.addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  player.src = URL.createObjectURL(file);
-  player.play();
+    const file = e.target.files[0];
+    if (!file) return;
+    player.src = URL.createObjectURL(file);
+    player.play();
 });
 </script>
 
 </body>
 </html>
-
-
