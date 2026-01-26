@@ -152,7 +152,7 @@ button:hover {
 
             <div class="actions">
                 <?php if ($task['status'] !== 'done'): ?>
-                    <form action="mark_done.php" method="POST">
+                    <form action="delete_task.php" method="POST">
                         <input type="hidden" name="id" value="<?= $task['id'] ?>">
                         <button type="submit">✔</button>
                     </form>
@@ -186,4 +186,5 @@ input.addEventListener("change", e => {
 
 </body>
 </html>
+
 
