@@ -28,59 +28,66 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <title>Mon planning</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="planning.css">
-
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #eef2ff;
-    margin: 0;
-    padding: 0;
+/* ===== SIDEBAR ===== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: linear-gradient(180deg, #1e3a8a, #2563eb);
+    color: white;
+    padding: 25px 20px;
+    box-shadow: 3px 0 12px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+.sidebar.closed { transform: translateX(-260px); }
+
+.sidebar .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-nav {
+.close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.hamburger {
+    position: fixed;
+    top: 15px;
+    left: 15px;
     background: #1e3a8a;
     color: white;
-    padding: 15px;
-}
-
-.container {
-    max-width: 900px;
-    margin: 30px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 18px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-h1 {
-    margin-top: 0;
-}
-
-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-input[type="text"],
-input[type="date"] {
-    flex: 1;
-    padding: 10px;
+    padding: 10px 14px;
+    font-size: 1.6rem;
     border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
     cursor: pointer;
+    z-index: 1100;
 }
 
-button:hover {
-    opacity: 0.9;
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    margin-left: 260px;
+    padding: 25px;
+    transition: 0.3s;
+}
+.main-content.full { margin-left: 20px; }
+
+/* ===== STYLE FORM + TÂCHES ===== */
+.container {
+  background: #fff;
+  max-width: 900px;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 .task {
@@ -89,34 +96,35 @@ button:hover {
     padding: 12px;
     border-radius: 10px;
     margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
-
 .task.completed {
     background: #fef9c3;
     border-left-color: #facc15;
     text-decoration: line-through;
-    opacity: 0.8;
 }
 
-.actions {
-    display: flex;
-    gap: 6px;
-}
-
-.actions form {
-    margin: 0;
-}
-
-.music-box {
-    margin: 25px 0;
-    padding: 15px;
-    border-radius: 12px;
-    background: #f1f5f9;
-}
 </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar closed" id="sidebar">
+    <div class="top-bar">
+        <h2>AllPlaned</h2>
+        <button id="closeBtn" class="close-btn">✖</button>
+    </div>
+
+    <ul>
+        <li><a href="index.php">🏠 Accueil</a></li>
+        <li><a href="planning.php">🗓️ Planning</a></li>
+        <li><a href="emploidutemps.php">📅 Emploi du temps</a></li>
+        <li><a href="profile.php">👤 Profil</a></li>
+        <li><a href="logout.php">🔓 Déconnexion</a></li>
+    </ul>
+</div>
+
+<!-- BOUTON HAMBURGER -->
+<div id="hamburger" class="hamburger">☰</div>
 </head>
 
 <body>
@@ -186,5 +194,6 @@ input.addEventListener("change", e => {
 
 </body>
 </html>
+
 
 
