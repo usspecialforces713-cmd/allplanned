@@ -127,7 +127,7 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div id="hamburger" class="hamburger">☰</div>
 </head>
 
-<body>
+
 
 <nav>
   Connecté : <strong><?= htmlspecialchars($username) ?></strong>
@@ -190,10 +190,30 @@ input.addEventListener("change", e => {
     player.src = URL.createObjectURL(file);
     player.play();
 });
+    <script>
+const sidebar = document.getElementById("sidebar");
+const hamburger = document.getElementById("hamburger");
+const closeBtn = document.getElementById("closeBtn");
+const mainContent = document.querySelector(".main-content");
+
+// Ouvrir la sidebar
+hamburger.addEventListener("click", () => {
+    sidebar.classList.remove("closed");
+    mainContent?.classList.remove("full");
+});
+
+// Fermer la sidebar
+closeBtn.addEventListener("click", () => {
+    sidebar.classList.add("closed");
+    mainContent?.classList.add("full");
+});
+</script>
+
 </script>
 
 </body>
 </html>
+
 
 
 
