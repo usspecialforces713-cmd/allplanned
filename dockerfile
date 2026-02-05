@@ -16,3 +16,15 @@ COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY notify.py .
+COPY email_template.html .
+
+RUN pip install psycopg2-binary
+
+CMD ["python", "notify.py"]
+
