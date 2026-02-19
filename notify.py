@@ -6,13 +6,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # --------- CONFIG ENV ----------
-DB_HOST = os.getenv("DB_HOST", "db")
-DB_NAME = os.getenv("DB_NAME", "postgres")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
+DATABASE_URL = os.environ["DATABASE_URL"]
 
-EMAIL_FROM = os.getenv("EMAIL_FROM")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_FROM = os.environ["EMAIL_FROM"]
+EMAIL_PASSWORD = os.environ["EMAIL_PASSWORD"]
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 # ------------------------------
@@ -37,12 +34,7 @@ def send_email(to_email, task_title):
         server.send_message(msg)
 
 def main():
-    conn = psycopg2.connect(
-        host=DB_HOST,
-        database=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD
-    )
+    conn = psycopg2.connect(DATABASE_URL)
 
     while True:
         cur = conn.cursor()
