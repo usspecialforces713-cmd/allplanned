@@ -1,9 +1,9 @@
 <?php
-$host = getenv("PGHOST");
-$port = getenv("PGPORT");
-$db   = getenv("PGDATABASE");
-$user = getenv("PGUSER");
-$pass = getenv("PGPASSWORD");
+$host = getenv("PG_HOST");
+$port = getenv("PG_PORT");
+$db   = getenv("PG_DATABASE");
+$user = getenv("PG_USER");
+$pass = getenv("PG_PASSWORD");
 
 try {
     $pdo = new PDO(
