@@ -1,9 +1,14 @@
 <?php
-$host = getenv("PG_HOST");
-$port = getenv("PG_PORT");
-$db   = getenv("PG_DATABASE");
-$user = getenv("PG_USER");
-$pass = getenv("PG_PASSWORD");
+require_once __DIR__ . '/config/env.php';
+
+// Require all necessary database configuration
+requireEnv('PG_HOST', 'PG_PORT', 'PG_DATABASE', 'PG_USER', 'PG_PASSWORD');
+
+$host = env("PG_HOST");
+$port = env("PG_PORT");
+$db   = env("PG_DATABASE");
+$user = env("PG_USER");
+$pass = env("PG_PASSWORD");
 
 try {
     $pdo = new PDO(
@@ -17,4 +22,4 @@ try {
 } catch (PDOException $e) {
     die("Erreur connexion DB : " . $e->getMessage());
 }
-
+?>
